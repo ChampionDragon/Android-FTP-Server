@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+这个文件是SwiFTP的一部分。
+
+SwiFTP是免费的软件：你可以重新分配和/或修改
+它根据GNU通用公共许可证条款发布
+自由软件基金会，版本3的许可证，或者
+（可选）任何更新的版本。
+
+SwiFTP是分发的，希望它会有用，
+但没有任何担保; 甚至没有隐含的保证
+适销性或针对特定用途的适用性。 看到了
+GNU通用公共许可证更多细节。
+
+您应该收到GNU通用公共许可证的副本
+以及SwiFTP。 如果没有，请参阅<http://www.gnu.org/licenses/>。
+-->
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="be.ppareit.swiftp"
+    android:versionCode="21002"
+    android:versionName="2.10.2" >
+
+    <!-- 添加删除后台程序的权限 -->
+    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE"/>
+    <!-- 允许开机自动启动APP的权限 -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <uses-sdk
+        android:minSdkVersion="14"
+        android:targetSdkVersion="22" />
+
+    <application
+        android:icon="@drawable/launcher"
+        android:label="@string/swiftp_name"
+        android:name="be.ppareit.swiftp.FsApp"
+        android:allowBackup="true" >
+
+        <activity android:name="be.ppareit.swiftp.gui.FsPreferenceActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <service android:name="be.ppareit.swiftp.FsService" />
+
+        <receiver
+            android:name="be.ppareit.swiftp.gui.FsNotification"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="be.ppareit.swiftp.FTPSERVER_STARTED" />
+                <action android:name="be.ppareit.swiftp.FTPSERVER_STOPPED" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name="be.ppareit.swiftp.NsdService" />
+        <receiver
+            android:name="be.ppareit.swiftp.NsdService$StartStopReceiver"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="be.ppareit.swiftp.FTPSERVER_STARTED" />
+                <action android:name="be.ppareit.swiftp.FTPSERVER_STOPPED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Don't export this receiver in free, this clashes with paid -->
+        <receiver
+            android:name="be.ppareit.swiftp.RequestStartStopReceiver"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="be.ppareit.swiftp.ACTION_START_FTPSERVER" />
+                <action android:name="be.ppareit.swiftp.ACTION_STOP_FTPSERVER" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:icon="@drawable/launcher"
+            android:label="@string/swiftp_name"
+            android:name="be.ppareit.swiftp.gui.FsWidgetProvider"
+            android:exported="false" >
+            <intent-filter >
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="be.ppareit.swiftp.FTPSERVER_STARTED" />
+                <action android:name="be.ppareit.swiftp.FTPSERVER_STOPPED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info" />
+        </receiver>
+        <service android:name="be.ppareit.swiftp.gui.FsWidgetProvider$UpdateService" />
+
+        <!-- 设置自动启动APP的广播 -->
+        <receiver
+            android:name=".oaReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter android:priority="900">
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </receiver>
+
+
+    </application>
+
+</manifest>
